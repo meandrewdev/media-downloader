@@ -5,8 +5,9 @@ from telegrambot import start_bot
 
 
 def main():
-    loop = asyncio.get_event_loop()
     tasks = [start_heartbeat(), start_bot()]
+
+    loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.gather(*tasks))
 
 

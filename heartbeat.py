@@ -1,12 +1,19 @@
-from quart import Quart
+from aiohttp import web
 
-app = Quart(__name__)
+routes = web.RouteTableDef()
 
 
-@app.route('/heartbeat')
-async def heartbeat():
-    return 'Heartbeat OK'
+@routes.get('/heartbeat')
+async def heartbeat(request):
+    return web.Response(text='Heartbeat OK')
 
 
 async def start_heartbeat():
-    await app.run_task(host='0.0.0.0', port=5000)
+    app = web.Application()
+    app.add_routes(routes)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+
+    site = web.TCPSite(runner, '0.0.0.0', 5000)
+    await site.start()
