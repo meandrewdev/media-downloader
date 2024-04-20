@@ -1,6 +1,5 @@
 
-import json
-import os
+import logging
 from os import environ
 from shutil import rmtree
 
@@ -18,6 +17,8 @@ TELEGRAM_BOT_TOKEN = environ.get("TELEGRAM_BOT_TOKEN",
                                  "6809165420:AAE80S6kn5B4ERj8BbC0AZPzdViH1xxfd3M")
 
 bot = AsyncTeleBot(TELEGRAM_BOT_TOKEN, parse_mode='MarkdownV2')
+logger = logging.getLogger('media-downloader')
+logging.basicConfig(filename='app.log', level=logging.INFO)
 
 
 async def start_bot():
@@ -26,7 +27,7 @@ async def start_bot():
         await bot.infinity_polling()
     except Exception as e:
         print('Error starting telegram bot')
-        print(e)
+        logger.exception(e)
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -37,6 +38,7 @@ async def send_welcome(message):
             message.chat.id, t('telegram.start'))
 
     except Exception as e:
+        logger.exception(e)
         await bot.send_message(message.chat.id, t(
             'telegram.start_error', error=str(e)))
 
@@ -72,6 +74,7 @@ async def instagram_download(message):
         if "HTTP error code 401" in str(e):
             await login_required(message, "instagram")
         else:
+            logger.exception(e)
             await bot.reply_to(message, t('download.error', error=str(e)))
 
     finally:
@@ -112,6 +115,7 @@ async def instagram_login(message):
 
         await bot.send_message(message.chat.id, t('login.success', username=username))
     except Exception as e:
+        logger.exception(e)
         await bot.send_message(message.chat.id, t('login.error', error=str(e)))
 
 
