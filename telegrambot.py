@@ -57,7 +57,7 @@ async def instagram_download(message):
         post = await insta.get_post(message.text)
 
         if post.is_video:
-            await bot.send_video(message.chat.id, post.video_url, caption=escape_markdown(post.caption, version=2))
+            await bot.send_video(message.chat.id, post.video_url, caption=escape_markdown(post.caption))
         else:
             imgs_nodes = post.get_sidecar_nodes()
             imgs = [InputMediaPhoto(img.display_url) for img in imgs_nodes]
