@@ -13,8 +13,7 @@ from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
 from helpers import get_user_dir
 from instagram import Instagram
 
-TELEGRAM_BOT_TOKEN = environ.get("TELEGRAM_BOT_TOKEN",
-                                 "6809165420:AAE80S6kn5B4ERj8BbC0AZPzdViH1xxfd3M")
+TELEGRAM_BOT_TOKEN = environ.get("TELEGRAM_BOT_TOKEN")
 
 bot = AsyncTeleBot(TELEGRAM_BOT_TOKEN, parse_mode='MarkdownV2')
 logger = logging.getLogger('media-downloader')
