@@ -1,5 +1,6 @@
 import json
 from os import path
+from urllib.parse import urlparse
 
 from instaloader import Instaloader, Post
 
@@ -29,8 +30,9 @@ class Instagram:
 
     @asyncified
     def get_post(self, url):
-        url = url.strip(' /')
-        code = url.split("/")[-1]
+        u = urlparse(url)
+        path = u.path.strip(' /')
+        code = path.split("/")[-1]
 
         L = self.get_default_loader()
         post = Post.from_shortcode(L.context, code)
