@@ -1,0 +1,39 @@
+telegram:
+  start: |
+    🤖 *Welcome to our Telegram Bot for Media Downloads\!*
+
+    Our bot is designed to help you easily download media from various sources, including Instagram videos and images\. Below are the available commands and how to use them:
+      
+    *Commands*
+      \- /auth `\[service\] \[username\] \[password\]`: Authenticate user to access advanced features\. Replace `\[username\] and \[password\]` with your credentials\. Replace the `\[service\]` with the desired service, e\.g\. `instagram`
+      \- /clear: Clear all user data and settings
+      \- /help: This message
+    
+    *Supported services:*
+      \- instagram
+      
+    *Download Instagram Video*
+    Send us the Instagram video URL and we'll fetch it for you\!
+    
+    *Download Instagram Post Images*
+    Send us the Instagram image URL and we'll download it for you\!
+    
+    We're constantly working on improving our bot and adding new features\.
+
+    Happy downloading\! ✨
+  start-error: "❌ Error starting bot ```Error %{error}```"
+login:
+  start: |
+    Please authenticate by using the command ```Command
+    /auth %{service} username password```
+    Replace `username` and `password` with your credentials
+  success: "✅ Successfully logged in\\. User `%{username}` added to users and set as default"
+  error: "❌ Error logging in ```Error %{error}```"
+  required: "⚠️ You need to login to download media"
+  invalid: "❌ Invalid login credentials"
+  progress: "⏳ Logging in\\.\\.\\."
+  exists: "✅ You are already logged in\\. User `%{username}` set as default"
+download:
+  start: "⬇️ Downloading media\\.\\.\\."
+  error: "❌ Error downloading media ```Error %{error}```"
+clear-success: "✅ Successfully cleared all user data and settings"
