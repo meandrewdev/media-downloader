@@ -1,14 +1,17 @@
 
 import logging
+import os
+from datetime import datetime
 from os import environ
 from shutil import rmtree
+from urllib import request
 
 import instaloader
 from i18n import t
 from telebot.async_telebot import AsyncTeleBot
 from telebot.formatting import escape_markdown
 from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                           InputMediaPhoto)
+                           InputMediaAnimation, InputMediaPhoto)
 
 from helpers import get_user_dir
 from instagram import Instagram
@@ -50,14 +53,28 @@ async def clear_data(message):
 
 @bot.message_handler(regexp="https://.*\\.instagram\\.com/.*")
 async def instagram_download(message):
-    start_msg = await bot.send_message(message.chat.id, t('download.start'))
+    start_msg = await bot.reply_to(message, t('download.start'))
 
     try:
         insta = Instagram(get_user_dir(message))
         post = await insta.get_post(message.text)
 
         if post.is_video:
-            await bot.send_video(message.chat.id, post.video_url, caption=escape_markdown(post.caption))
+            video_name = str(datetime.now().timestamp()) + \
+                post.shortcode + ".mp4"
+
+            try:
+                request.urlretrieve(post.video_url, video_name)
+                with open(video_name, 'rb') as video:
+                    await bot.send_video(message.chat.id, video, caption=escape_markdown(post.caption), parse_mode=None)
+            except Exception as e:
+                logger.exception(e)
+                await bot.reply_to(message, t('download.error', error=str(e)))
+                return
+            finally:
+                if os.path.exists(video_name):
+                    os.remove(video_name)
+
         else:
             imgs_nodes = post.get_sidecar_nodes()
             imgs = [InputMediaPhoto(img.display_url) for img in imgs_nodes]
