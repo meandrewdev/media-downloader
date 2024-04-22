@@ -4,8 +4,8 @@ Description=Media Downloader Service
 [Service]
 Type=simple
 ExecStart={{PATH_TO_APP}}/.venv/bin/python .
-Environment="PATH={{PATH_TO_VENV}}/bin"
-WorkingDirectory={{PATH_TO_VENV}}
+Environment="PATH={{PATH_TO_APP}}/bin"
+WorkingDirectory={{PATH_TO_APP}}
 Restart=on-failure
 
 [Install]
