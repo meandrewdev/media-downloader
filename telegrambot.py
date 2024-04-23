@@ -136,7 +136,8 @@ async def instagram_login(message):
 
 
 async def login_required(message, type):
-    button = InlineKeyboardButton('Login', callback_data=type + '_login')
+    button = InlineKeyboardButton(
+        t('login.button'), callback_data=type + '_login')
     keyboard = InlineKeyboardMarkup()
     keyboard.add(button)
 

@@ -33,6 +33,7 @@ login:
   invalid: "❌ Invalid login credentials"
   progress: "⏳ Logging in\\.\\.\\."
   exists: "✅ You are already logged in\\. User `%{username}` set as default"
+  button: "Login"
 download:
   start: "⬇️ Downloading media\\.\\.\\."
   error: "❌ Error downloading media ```Error %{error}```"
