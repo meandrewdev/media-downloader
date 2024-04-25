@@ -60,7 +60,7 @@ async def instagram_download(message):
         post = await insta.get_post(message.text)
 
         caption = "{}\n\n[{}]({})".format(escape_markdown(
-            post.caption), t('telegram.post-link'), message.text)
+            post.caption or ''), t('telegram.post-link'), message.text)
 
         if post.is_video:
             video_name = str(datetime.now().timestamp()) + \
