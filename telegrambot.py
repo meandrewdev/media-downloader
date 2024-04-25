@@ -17,7 +17,7 @@ from helpers import get_user_dir
 from instagram import Instagram
 
 TELEGRAM_BOT_TOKEN = environ.get("TELEGRAM_BOT_TOKEN")
-MAX_CAPTION_LENGTH = 1000
+MAX_CAPTION_LENGTH = 3000
 
 bot = AsyncTeleBot(TELEGRAM_BOT_TOKEN, parse_mode='MarkdownV2')
 logger = logging.getLogger('media-downloader')
@@ -63,14 +63,14 @@ async def instagram_download(message):
         post_caption = post.caption or ''
         post_caption = post_caption[:MAX_CAPTION_LENGTH] + '...' if len(
             post_caption) > MAX_CAPTION_LENGTH else post_caption
-        caption = "{}\n\n[{}]({})".format(escape_markdown(
-            post_caption), t('telegram.post-link'), message.text)
 
         if post.is_video:
-            video_name = str(datetime.now().timestamp()) + \
-                post.shortcode + ".mp4"
+            caption = "{}\n\n[{}]({})".format(escape_markdown(
+                post_caption), t('telegram.post-link'), message.text)
 
             try:
+                video_name = str(datetime.now().timestamp()) + \
+                    post.shortcode + ".mp4"
                 request.urlretrieve(post.video_url, video_name)
                 with open(video_name, 'rb') as video:
                     await bot.send_video(message.chat.id, video, caption=caption, parse_mode=None)
@@ -85,7 +85,8 @@ async def instagram_download(message):
         else:
             imgs_nodes = post.get_sidecar_nodes()
             imgs = [InputMediaPhoto(img.display_url) for img in imgs_nodes]
-            imgs[0].caption = caption
+            imgs[0].caption = caption = "{}\n\n{}".format(
+                post_caption, message.text)
             await bot.send_media_group(message.chat.id, imgs)
 
         await bot.delete_message(message.chat.id, message.message_id)
