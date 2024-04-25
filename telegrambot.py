@@ -17,7 +17,7 @@ from helpers import get_user_dir
 from instagram import Instagram
 
 TELEGRAM_BOT_TOKEN = environ.get("TELEGRAM_BOT_TOKEN")
-MAX_CAPTION_LENGTH = 3000
+MAX_CAPTION_LENGTH = 2500
 
 bot = AsyncTeleBot(TELEGRAM_BOT_TOKEN, parse_mode='MarkdownV2')
 logger = logging.getLogger('media-downloader')
