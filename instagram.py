@@ -1,10 +1,11 @@
+import functools
 import json
 from os import path
 from urllib.parse import urlparse
 
 from instaloader import Instaloader, Post
 
-from helpers import asyncified
+from helpers import asyncified, must_login
 
 DATA_FILE = 'instagram.json'
 
@@ -16,18 +17,36 @@ class Instagram:
         pass
 
     @asyncified
-    def login(self, username, password):
+    def login(self, username, password, force=False):
         L = Instaloader()
-        L.login(username, password)
 
         if username in self.data.users:
-            raise Exception("User already exists")
+            if force:
+                del self.data.sessions[username]
+                self.data.users.remove(username)
+            else:
+                raise AlreadyLoggedIn(
+                    "User {} already exists".format(username))
 
+        L.login(username, password)
         self.data.sessions[username] = L.save_session()
         self.data.users.append(username)
         self.data.default_user = username
         self.data.write_to_file()
 
+    @asyncified
+    def check_login(self):
+        L = self.get_default_loader()
+        if not L.context.username:
+            return False
+
+        user = L.test_login()
+        if not user:
+            return False
+
+        return True
+
+    @must_login
     @asyncified
     def get_post(self, url):
         u = urlparse(url)
@@ -76,3 +95,7 @@ class Instagram:
         def write_to_file(self):
             with open(self.file_path, 'w') as file:
                 json.dump(self.to_json(), file, indent=4)
+
+
+class AlreadyLoggedIn(Exception):
+    pass

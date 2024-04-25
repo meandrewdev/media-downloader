@@ -3,3 +3,5 @@ __pycache__
 users
 .vscode
 *.log
+instagram.json
+user.json

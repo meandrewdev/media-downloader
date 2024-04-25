@@ -10,8 +10,8 @@ import instaloader
 from i18n import t
 from telebot.async_telebot import AsyncTeleBot
 from telebot.formatting import escape_markdown
-from telebot.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                           InputMediaAnimation, InputMediaPhoto)
+from telebot.types import (
+    InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto)
 
 from helpers import get_user_dir
 from instagram import Instagram
@@ -59,6 +59,9 @@ async def instagram_download(message):
         insta = Instagram(get_user_dir(message))
         post = await insta.get_post(message.text)
 
+        caption = "{}\n\n[{}]({})".format(escape_markdown(
+            post.caption), t('telegram.post-link'), message.text)
+
         if post.is_video:
             video_name = str(datetime.now().timestamp()) + \
                 post.shortcode + ".mp4"
@@ -66,7 +69,7 @@ async def instagram_download(message):
             try:
                 request.urlretrieve(post.video_url, video_name)
                 with open(video_name, 'rb') as video:
-                    await bot.send_video(message.chat.id, video, caption=escape_markdown(post.caption), parse_mode=None)
+                    await bot.send_video(message.chat.id, video, caption=caption, parse_mode=None)
             except Exception as e:
                 logger.exception(e)
                 await bot.reply_to(message, t('download.error', error=str(e)))
@@ -78,7 +81,7 @@ async def instagram_download(message):
         else:
             imgs_nodes = post.get_sidecar_nodes()
             imgs = [InputMediaPhoto(img.display_url) for img in imgs_nodes]
-            imgs[0].caption = post.caption
+            imgs[0].caption = caption
             await bot.send_media_group(message.chat.id, imgs)
 
         await bot.delete_message(message.chat.id, message.message_id)
@@ -87,11 +90,8 @@ async def instagram_download(message):
         await login_required(message, "instagram")
 
     except Exception as e:
-        if "HTTP error code 401" in str(e):
-            await login_required(message, "instagram")
-        else:
-            logger.exception(e)
-            await bot.reply_to(message, t('download.error', error=str(e)))
+        logger.exception(e)
+        await bot.reply_to(message, t('download.error', error=str(e)))
 
     finally:
         await bot.delete_message(message.chat.id, start_msg.message_id)

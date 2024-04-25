@@ -22,6 +22,7 @@ telegram:
 
     Happy downloading\! ✨
   start-error: "❌ Error starting bot ```Error %{error}```"
+  post-link: "🔗 Link"
 login:
   start: |
     Please authenticate by using the command ```Command
@@ -29,7 +30,7 @@ login:
     Replace `username` and `password` with your credentials
   success: "✅ Successfully logged in\\. User `%{username}` added to users and set as default"
   error: "❌ Error logging in ```Error %{error}```"
-  required: "⚠️ You need to login to download media"
+  required: "⚠️ You need to login to access this feature"
   invalid: "❌ Invalid login credentials"
   progress: "⏳ Logging in\\.\\.\\."
   exists: "✅ You are already logged in\\. User `%{username}` set as default"
