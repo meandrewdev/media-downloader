@@ -17,6 +17,7 @@ from helpers import get_user_dir
 from instagram import Instagram
 
 TELEGRAM_BOT_TOKEN = environ.get("TELEGRAM_BOT_TOKEN")
+MAX_CAPTION_LENGTH = 9000
 
 bot = AsyncTeleBot(TELEGRAM_BOT_TOKEN, parse_mode='MarkdownV2')
 logger = logging.getLogger('media-downloader')
@@ -59,8 +60,11 @@ async def instagram_download(message):
         insta = Instagram(get_user_dir(message))
         post = await insta.get_post(message.text)
 
+        post_caption = post.caption or ''
+        post_caption = post_caption[:MAX_CAPTION_LENGTH] + '...' if len(
+            post_caption) > MAX_CAPTION_LENGTH else post_caption
         caption = "{}\n\n[{}]({})".format(escape_markdown(
-            post.caption or ''), t('telegram.post-link'), message.text)
+            post_caption), t('telegram.post-link'), message.text)
 
         if post.is_video:
             video_name = str(datetime.now().timestamp()) + \
